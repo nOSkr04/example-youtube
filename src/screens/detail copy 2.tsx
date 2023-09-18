@@ -1,40 +1,30 @@
-import React, { useRef, useState, useEffect, memo, useCallback } from "react";
+import React, { useRef, useState, useEffect, memo } from "react";
 import { View } from "react-native";
 import { ResizeMode, Video } from "expo-av";
 import {
+  Gesture,
+  GestureDetector,
   GestureHandlerRootView,
-  TapGestureHandler,
-  State,
 } from "react-native-gesture-handler";
 import VideoControls from "../components/video-controls";
 import * as ScreenOrientation from "expo-screen-orientation";
 
-export type Lesson = {
-  lessonId: string;
-  lessonVideoUrl: string;
-  lessonTitle: string;
-  lessonDescription: string;
-  videoTotalDuration: string;
-  lessonThumbnailImageUrl: string;
-};
-
-const playbackSpeedOptions: number[] = [0.5, 0.75, 1, 1.25, 1.5, 2];
-
+const playbackSpeedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
 const DetailScreen = memo(() => {
-  const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | {}>({});
+  const [lessons, setLessons] = useState([]);
+  const [selectedLesson, setSelectedLesson] = useState({});
   const videoRef = useRef<Video>(null);
-  const [currentLessonIndex, setCurrentLessonIndex] = useState<number>(0);
-  const [orientation, setOrientation] = useState<number>(1);
-  const [currentTime, setCurrentTime] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
-  const [isMuted, setIsMuted] = useState<boolean>(false);
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+  const [orientation, setOrientation] = useState(1);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     // Simulate fetching lessons by course
-    const fakeLessons: Lesson[] = [
+    const fakeLessons = [
       {
         lessonId: "1",
         lessonVideoUrl:
@@ -61,7 +51,7 @@ const DetailScreen = memo(() => {
     setSelectedLesson(fakeLessons[0]);
   }, []);
 
-  // Sets the current time, if the video is finished, moves to the next video
+  //sets the current time, if video is finished, moves to the next video
   const handlePlaybackStatusUpdate = (status: any) => {
     setCurrentTime(status.positionMillis);
     if (status.didJustFinish) {
@@ -91,7 +81,7 @@ const DetailScreen = memo(() => {
   };
 
   const togglePlaybackSpeed = () => {
-    // Gets the next playback speed index
+    //gets the next playback speed index
     const nextSpeedIndex = playbackSpeedOptions.indexOf(playbackSpeed) + 1;
     if (nextSpeedIndex < playbackSpeedOptions.length) {
       videoRef.current?.setRateAsync(
@@ -100,7 +90,7 @@ const DetailScreen = memo(() => {
       );
       setPlaybackSpeed(playbackSpeedOptions[nextSpeedIndex]);
     }
-    // If the last option i.e., 2x speed is applied, then move to the first option
+    //if the last option i.e. 2x speed is applied. then moves to first option
     else {
       videoRef.current?.setRateAsync(playbackSpeedOptions[0], true);
       setPlaybackSpeed(playbackSpeedOptions[0]);
@@ -126,18 +116,9 @@ const DetailScreen = memo(() => {
     }
     setOrientation(await ScreenOrientation.getOrientationAsync());
   };
-
-  const onSeek = useCallback((value: string | number) => {
-    videoRef.current?.setPositionAsync(+value);
-    setCurrentTime(+value);
-  }, []);
-
-  if (lessons.length > 0) {
-    return null;
-  }
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* <ActivityIndicator  size="large" /> */}
       {lessons.length > 0 && (
         <>
           <Video
@@ -158,7 +139,10 @@ const DetailScreen = memo(() => {
             onPlayNextVideo={playNextVideo}
             onToggleMute={toggleMute}
             onTogglePlaybackSpeed={togglePlaybackSpeed}
-            onSeek={onSeek}
+            onSeek={(value) => {
+              videoRef.current?.setPositionAsync(+value);
+              setCurrentTime(+value);
+            }}
             onToggleFullscreen={toggleFullscreen}
             duration={+selectedLesson?.videoTotalDuration}
             currentTime={currentTime}
@@ -169,10 +153,8 @@ const DetailScreen = memo(() => {
           />
         </>
       )}
-      {/* This section is only displayed when fullscreen is not active */}
-      {orientation === 1 && (
-        <View>{/* Simulate other UI elements here */}</View>
-      )}
+      {/* //this section is only displayed when fullscreen is not active */}
+      {orientation == 1 && <View>{/* Simulate other UI elements here */}</View>}
     </GestureHandlerRootView>
   );
 });

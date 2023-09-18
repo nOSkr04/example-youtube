@@ -2,21 +2,22 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { Slider } from "@miblanchard/react-native-slider";
+import { Lesson } from "../screens/detail";
 
 type Props = {
-  onTogglePlayPause: any;
-  onPlayPreviousVideo: any;
-  onPlayNextVideo: any;
-  onToggleMute: any;
-  onTogglePlaybackSpeed: any;
-  onSeek: any;
-  onToggleFullscreen: any;
-  duration: any;
-  currentTime: any;
-  rate: any;
-  isMuted: any;
-  shouldPlay: any;
-  fullScreenValue: any;
+  onTogglePlayPause: () => void;
+  onPlayPreviousVideo: () => void;
+  onPlayNextVideo: () => void;
+  onToggleMute: () => void;
+  onTogglePlaybackSpeed: () => void;
+  onSeek: (value: string | number) => void;
+  onToggleFullscreen: () => Promise<void>;
+  duration: number;
+  currentTime: number;
+  rate: number;
+  isMuted: boolean;
+  shouldPlay: boolean;
+  fullScreenValue: boolean;
 };
 
 const VideoControls = ({
