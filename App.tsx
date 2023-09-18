@@ -14,7 +14,14 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="DetailScreen" component={DetailScreen} />
+        <Stack.Screen
+          name="DetailScreen"
+          component={DetailScreen}
+          options={{
+            headerShown: false,
+            animation: "fade",
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

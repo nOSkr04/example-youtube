@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { Slider } from "@miblanchard/react-native-slider";
-import { Lesson } from "../screens/detail";
+import Animated from "react-native-reanimated";
 
 type Props = {
   onTogglePlayPause: () => void;
@@ -35,22 +35,24 @@ const VideoControls = ({
   shouldPlay,
   fullScreenValue,
 }: Props) => {
-  const formatTime = (timeInMillis: any) => {
-    if (!isNaN(timeInMillis)) {
-      const totalSeconds = Math.floor(timeInMillis / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
+  function formatTime(milliseconds: number): string {
+    const duration = milliseconds / 1000;
 
-      return `${minutes < 10 ? "0" : ""}${minutes}:${
-        seconds < 10 ? "0" : ""
-      }${seconds}`;
-    }
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration - hours * 3600) / 60);
+    const seconds = parseInt(`${duration - hours * 3600 - minutes * 60}`, 10);
 
-    return "00:00";
-  };
+    let result = `${hours < 10 ? "0" + hours : hours}:`.replace("00:", "");
+    result += `${minutes < 10 ? "0" + minutes : minutes}:`;
+    result += `${seconds < 10 ? "0" + seconds : seconds}`;
+
+    return result;
+  }
 
   return (
-    <View style={{ backgroundColor: "red" }}>
+    <Animated.View
+      style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 2 }}
+    >
       <View style={styles.controls}>
         <TouchableOpacity
           onPress={() => {
@@ -68,13 +70,13 @@ const VideoControls = ({
           onPress={onPlayPreviousVideo}
           style={styles.controlButton}
         >
-          <AntDesign name="stepbackward" size={24} color="red" />
+          <MaterialIcons name="replay-10" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={onPlayNextVideo}
           style={styles.controlButton}
         >
-          <AntDesign name="stepforward" size={24} color="red" />
+          <MaterialIcons name="forward-10" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -114,7 +116,7 @@ const VideoControls = ({
         <Slider
           containerStyle={styles.slider}
           minimumValue={0}
-          maximumValue={duration * 1000}
+          maximumValue={duration}
           value={time}
           onValueChange={(value: any) => {
             onSeek(value);
@@ -126,9 +128,9 @@ const VideoControls = ({
           maximumTrackTintColor="#AAA"
           thumbTintColor="#FFF"
         />
-        <Text style={styles.timeText}>{formatTime(duration * 1000)}</Text>
+        <Text style={styles.timeText}>{formatTime(duration)}</Text>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
