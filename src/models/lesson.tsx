@@ -1,4 +1,4 @@
-import { ILesson } from "../interfaces/lesson";
+import { ILesson } from "../interface/lesson";
 
 export class Lesson implements ILesson {
   _id: string;

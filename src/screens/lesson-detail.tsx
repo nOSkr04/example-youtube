@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigationRoutes, RootStackParamList } from "../../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import useSWR from "swr";
-import { ILesson } from "../interfaces/lesson";
+import { ILesson } from "../interface/lesson";
 import { LessonsApi } from "../api";
 const playbackSpeedOptions: number[] = [0.5, 0.75, 1, 1.25, 1.5, 2];
 

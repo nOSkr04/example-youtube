@@ -9,7 +9,7 @@ import React, { memo } from "react";
 import { Image } from "expo-image";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { IStory } from "../interfaces/story";
+import { IStory } from "../interface/story";
 type Props = {
   item: IStory;
 };

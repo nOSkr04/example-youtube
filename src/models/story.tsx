@@ -1,4 +1,4 @@
-import { IStory } from "../interfaces/story";
+import { IStory } from "../interface/story";
 
 export class Story implements IStory {
   _id: string;

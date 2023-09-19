@@ -1,6 +1,6 @@
-import { HttpRequest } from "../utils";
+// import { HttpRequest } from "../utils";
 
-const httpRequest = new HttpRequest();
+// const httpRequest = new HttpRequest();
 
 export const getLessons = async ({
   page,
@@ -9,10 +9,10 @@ export const getLessons = async ({
   page: number;
   limit: number;
 }) => {
-  const res = await httpRequest.get("/lessons", { page, limit });
-  return res.data;
+  // const res = await httpRequest.get("/lessons", { page, limit });
+  // return res.data;
 };
 export const getLesson = async ({ id }: { id: string }) => {
-  const res = await httpRequest.get(`/lessons/${id}`);
-  return res.data;
+  // const res = await httpRequest.get(`/lessons/${id}`);
+  // return res.data;
 };

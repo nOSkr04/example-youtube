@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import { ResizeMode, Video } from "expo-av";
-import React, { useRef } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import React from "react";
+import { Pressable } from "react-native";
 import Animated, {
   Easing,
   SharedTransition,
@@ -27,8 +26,6 @@ import Animated, {
 //   };
 // });
 
-const AnimatedVideo = Animated.createAnimatedComponent(Video);
-
 const springConfig = {
   mass: 1,
   damping: 100,
@@ -50,34 +47,22 @@ export const customTransition = SharedTransition.custom((values) => {
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const videoRef = useRef<Video>(null);
-  const [status, setStatus] = React.useState({});
+
   return (
     <Pressable
       style={{ flex: 1, flexDirection: "column" }}
-      onPress={() => navigation.navigate("Detail", { videoRef })}
+      onPress={() => navigation.navigate("Detail")}
     >
-      <AnimatedVideo
+      <Animated.Image
         sharedTransitionTag="sharedTag"
-        ref={videoRef}
-        style={styles.video}
+        sharedTransitionStyle={customTransition}
+        style={{ width: 150, height: 150 }}
         source={{
-          uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+          uri: "https://images.pexels.com/photos/18056655/pexels-photo-18056655/free-photo-of-a-humpback-whale-emerging-from-the-water.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
         }}
-        useNativeControls
-        resizeMode={ResizeMode.CONTAIN}
-        isLooping
-        onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
     </Pressable>
   );
 };
 
 export { HomeScreen };
-
-const styles = StyleSheet.create({
-  video: {
-    height: 150,
-    width: 150,
-  },
-});

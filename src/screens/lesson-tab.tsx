@@ -1,6 +1,6 @@
 import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import React, { memo, useCallback } from "react";
-import { ILesson } from "../interfaces/lesson";
+import { ILesson } from "../interface/lesson";
 import { LessonContainer } from "../components/lesson-container";
 import useSWRInfinite from "swr/infinite";
 import { LessonsApi, StoryApi } from "../api";

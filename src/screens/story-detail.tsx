@@ -16,7 +16,7 @@ import { NavigationRoutes, RootStackParamList } from "../../navigation/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import useSWR from "swr";
 import { StoryApi } from "../api";
-import { IStory } from "../interfaces/story";
+import { IStory } from "../interface/story";
 const playbackSpeedOptions: number[] = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 type Props = NativeStackScreenProps<

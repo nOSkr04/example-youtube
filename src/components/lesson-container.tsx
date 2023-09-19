@@ -6,7 +6,7 @@ import {
   View,
 } from "react-native";
 import React, { memo } from "react";
-import { ILesson } from "../interfaces/lesson";
+import { ILesson } from "../interface/lesson";
 import { Image } from "expo-image";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";

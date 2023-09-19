@@ -3,7 +3,7 @@ import React, { memo, useCallback } from "react";
 import { LessonContainer } from "../components/lesson-container";
 import useSWRInfinite from "swr/infinite";
 import { StoryApi } from "../api";
-import { IStory } from "../interfaces/story";
+import { IStory } from "../interface/story";
 import { StoryContainer } from "../components/story-container";
 const StoryTab = memo(() => {
   const { data, size, setSize, isLoading } = useSWRInfinite(
