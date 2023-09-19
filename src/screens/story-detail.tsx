@@ -12,10 +12,20 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
-
+import { NavigationRoutes, RootStackParamList } from "../../navigation/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import useSWR from "swr";
+import { StoryApi } from "../api";
+import { IStory } from "../interfaces/story";
 const playbackSpeedOptions: number[] = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-const DetailScreen = memo(() => {
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  NavigationRoutes.StoryDetailScreen
+>;
+
+const StoryDetailScreen = memo(({ route }: Props) => {
+  const { id } = route.params;
   const sf = useSafeAreaInsets();
   const navigation = useNavigation();
   const videoRef = useRef<Video>(null);
@@ -27,6 +37,11 @@ const DetailScreen = memo(() => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [firstPress, setFirstPress] = useState(false);
+
+  const { data } = useSWR<IStory>(`story.${id}`, async () => {
+    const res = await StoryApi.getStory({ id });
+    return res;
+  });
 
   const handlePlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     if (!status.isLoaded) {
@@ -122,6 +137,10 @@ const DetailScreen = memo(() => {
     setIsFullscreen(false);
   }, []);
 
+  if (!data) {
+    return null;
+  }
+
   return (
     <Pressable style={styles.root} onPress={() => setFirstPress(!firstPress)}>
       {!firstPress && (
@@ -139,7 +158,7 @@ const DetailScreen = memo(() => {
       <Video
         ref={videoRef}
         source={{
-          uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+          uri: data.url,
         }}
         rate={playbackSpeed}
         isMuted={isMuted}
@@ -148,9 +167,9 @@ const DetailScreen = memo(() => {
         onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
         style={styles.videoContainer}
         onLoad={onLoad}
-        // usePoster={true}
-        // posterSource={require("../../assets/adaptive-icon.png")}
-        // posterStyle={styles.posterStyle}
+        usePoster={true}
+        posterSource={{ uri: data.photo }}
+        posterStyle={styles.posterStyle}
         onLoadStart={() => setLoading(true)}
       />
 
@@ -175,9 +194,9 @@ const DetailScreen = memo(() => {
   );
 });
 
-DetailScreen.displayName = "DetailScreen";
+StoryDetailScreen.displayName = "StoryDetailScreen";
 
-export { DetailScreen };
+export { StoryDetailScreen };
 
 export const styles = StyleSheet.create({
   root: {

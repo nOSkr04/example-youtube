@@ -1,22 +1,33 @@
-import React, { useRef, useState, useEffect, memo, useCallback } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import React, { useRef, useState, memo, useCallback } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import VideoControls from "../components/video-controls";
 import * as ScreenOrientation from "expo-screen-orientation";
-
-export type Lesson = {
-  lessonId: string;
-  lessonVideoUrl: string;
-  lessonTitle: string;
-  lessonDescription: string;
-  videoTotalDuration: string;
-  lessonThumbnailImageUrl: string;
-};
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationRoutes, RootStackParamList } from "../../navigation/types";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import useSWR from "swr";
+import { ILesson } from "../interfaces/lesson";
+import { LessonsApi } from "../api";
 const playbackSpeedOptions: number[] = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-const DetailScreen = memo(() => {
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  NavigationRoutes.LessonDetailScreen
+>;
+
+const LessonDetailScreen = memo(({ route }: Props) => {
+  const { id } = route.params;
+  const sf = useSafeAreaInsets();
+  const navigation = useNavigation();
   const videoRef = useRef<Video>(null);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
@@ -25,8 +36,13 @@ const DetailScreen = memo(() => {
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
+  const [firstPress, setFirstPress] = useState(false);
 
-  // Sets the current time, if the video is finished, moves to the next video
+  const { data } = useSWR<ILesson>(`lesson.${id}`, async () => {
+    const res = await LessonsApi.getLesson({ id });
+    return res;
+  });
+
   const handlePlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     if (!status.isLoaded) {
       return;
@@ -106,12 +122,43 @@ const DetailScreen = memo(() => {
     setDuration(status?.durationMillis!);
   };
 
+  const appBar = useCallback(() => {
+    return {
+      marginTop: sf.top,
+      marginHorizontal: 16,
+    };
+  }, []);
+
+  const onBack = useCallback(async () => {
+    navigation.goBack();
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.PORTRAIT_UP
+    );
+    setIsFullscreen(false);
+  }, []);
+
+  if (!data) {
+    return null;
+  }
+
   return (
-    <GestureHandlerRootView style={styles.root}>
+    <Pressable style={styles.root} onPress={() => setFirstPress(!firstPress)}>
+      {!firstPress && (
+        <View style={appBar()}>
+          <TouchableOpacity onPress={onBack} style={styles.backButton}>
+            <AntDesign name={"left"} color={"white"} size={16} />
+          </TouchableOpacity>
+        </View>
+      )}
+      {loading && (
+        <View style={styles.loading}>
+          <ActivityIndicator size={"large"} color={"white"} />
+        </View>
+      )}
       <Video
         ref={videoRef}
         source={{
-          uri: "https://firebasestorage.googleapis.com/v0/b/sedu-8a3d2.appspot.com/o/y2mate.is%20-%20The%20C%20ft.%20Gemlest%201MUSUN%20Lyrics%20-bD2pGlNaDe0-1080pp-1695008357.mp4?alt=media&token=885a71b0-7af1-4301-ace1-df140100f19a",
+          uri: data.url,
         }}
         rate={playbackSpeed}
         isMuted={isMuted}
@@ -121,11 +168,12 @@ const DetailScreen = memo(() => {
         style={styles.videoContainer}
         onLoad={onLoad}
         usePoster={true}
-        posterSource={require("../../assets/adaptive-icon.png")}
+        posterSource={{ uri: data.photo }}
         posterStyle={styles.posterStyle}
         onLoadStart={() => setLoading(true)}
       />
-      {!loading && (
+
+      {!firstPress && (
         <VideoControls
           onTogglePlayPause={togglePlayPause}
           onPlayPreviousVideo={playPreviousVideo}
@@ -142,13 +190,13 @@ const DetailScreen = memo(() => {
           fullScreenValue={isFullscreen}
         />
       )}
-    </GestureHandlerRootView>
+    </Pressable>
   );
 });
 
-DetailScreen.displayName = "DetailScreen";
+LessonDetailScreen.displayName = "LessonDetailScreen";
 
-export { DetailScreen };
+export { LessonDetailScreen };
 
 export const styles = StyleSheet.create({
   root: {
@@ -162,5 +210,13 @@ export const styles = StyleSheet.create({
     width: "auto",
     height: "auto",
     alignSelf: "center",
+  },
+  backButton: {
+    padding: 8,
+  },
+  loading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

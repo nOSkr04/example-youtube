@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { memo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { LessonTab } from "./lesson";
+import { LessonTab } from "./lesson-tab";
 import { StoryTab } from "./story-tab";
 
 const Tab = createMaterialTopTabNavigator();

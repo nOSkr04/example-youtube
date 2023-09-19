@@ -1,16 +1,15 @@
 import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import React, { memo, useCallback } from "react";
+import { ILesson } from "../interfaces/lesson";
 import { LessonContainer } from "../components/lesson-container";
 import useSWRInfinite from "swr/infinite";
-import { StoryApi } from "../api";
-import { IStory } from "../interfaces/story";
-import { StoryContainer } from "../components/story-container";
-const StoryTab = memo(() => {
+import { LessonsApi, StoryApi } from "../api";
+const LessonTab = memo(() => {
   const { data, size, setSize, isLoading } = useSWRInfinite(
     (index) => `lesson.${index}`,
     async (index) => {
       const page = index.split(".").pop();
-      const res = await StoryApi.getStorys({
+      const res = await LessonsApi.getLessons({
         page: parseInt(`${page || 1}`, 10) + 1,
         limit: 10,
       });
@@ -19,8 +18,8 @@ const StoryTab = memo(() => {
     { revalidateAll: true }
   );
 
-  const renderItem = useCallback(({ item }: { item: IStory }) => {
-    return <StoryContainer item={item} />;
+  const renderItem = useCallback(({ item }: { item: ILesson }) => {
+    return <LessonContainer item={item} />;
   }, []);
 
   if (!data) {
@@ -29,9 +28,9 @@ const StoryTab = memo(() => {
 
   return (
     <>
-      {/* <AppBar right={<></>} title={"Өгүүллэг"}   /> */}
+      {/* <AppBar right={<></>} title={"Сургалт"}   /> */}
       <FlatList
-        data={(data || []).map((entry) => entry.data).flat() as IStory[]}
+        data={(data || []).map((entry) => entry.data).flat() as ILesson[]}
         keyExtractor={(item) => item._id}
         onEndReached={() => setSize(size + 1)}
         onEndReachedThreshold={0.5}
@@ -51,9 +50,9 @@ const StoryTab = memo(() => {
   );
 });
 
-StoryTab.displayName = "StoryTab";
+LessonTab.displayName = "LessonTab";
 
-export { StoryTab };
+export { LessonTab };
 
 const styles = StyleSheet.create({
   root: {

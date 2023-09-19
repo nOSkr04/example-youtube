@@ -6,17 +6,17 @@ import {
   View,
 } from "react-native";
 import React, { memo } from "react";
-import { ILesson } from "../interfaces/lesson";
 import { Image } from "expo-image";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { IStory } from "../interfaces/story";
 type Props = {
-  item: ILesson;
+  item: IStory;
 };
 
 const width = Dimensions.get("window").width;
 
-const LessonContainer = memo(({ item }: Props) => {
+const StoryContainer = memo(({ item }: Props) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -49,9 +49,9 @@ const LessonContainer = memo(({ item }: Props) => {
   );
 });
 
-LessonContainer.displayName = "LessonContainer";
+StoryContainer.displayName = "StoryContainer";
 
-export { LessonContainer };
+export { StoryContainer };
 
 const styles = StyleSheet.create({
   root: {

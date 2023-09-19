@@ -1,6 +1,6 @@
-import { ILesson } from "../interfaces/lesson";
+import { IStory } from "../interfaces/story";
 
-export class Lesson implements ILesson {
+export class Story implements IStory {
   _id: string;
   title: string;
   duration: string;
@@ -19,7 +19,7 @@ export class Lesson implements ILesson {
     createdAt,
     photo,
     seen,
-  }: ILesson) {
+  }: IStory) {
     this._id = _id;
     this.title = title;
     this.seen = seen;
@@ -30,7 +30,7 @@ export class Lesson implements ILesson {
     this.photo = photo;
   }
 
-  static fromJson(json: ILesson) {
-    return new Lesson(json);
+  static fromJson(json: IStory) {
+    return new Story(json);
   }
 }
